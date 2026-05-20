@@ -1,25 +1,3 @@
-//package tests;
-//
-//import Base.BaseTest;
-//import com.microsoft.playwright.assertions.PlaywrightAssertions;
-//import org.testng.annotations.Test;
-//import pages.LoginPage;
-//import utils.ConfigReader;
-//
-//public class LoginTest extends BaseTest {
-//
-//    @Test
-//    public void adminShouldLoginSuccessfully() {
-//        LoginPage loginPage = new LoginPage(page);
-//
-//        loginPage.openHomePage();
-//        loginPage.loginAsAdmin();
-//
-//        PlaywrightAssertions.assertThat(page).not()
-//                .hasURL(ConfigReader.get("frontend.url"));
-//    }
-//}
-
 package tests;
 
 import Base.BaseTest;
