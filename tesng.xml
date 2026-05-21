@@ -1,9 +1,17 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
 <suite name="Frontend Playwright Test Suite">
+
     <test name="Login Tests">
         <classes>
             <class name="tests.LoginTest"/>
         </classes>
     </test>
+
+    <test name="Product Browsing Tests">
+        <classes>
+            <class name="tests.ProductBrowsingTest"/>
+        </classes>
+    </test>
+
 </suite>
