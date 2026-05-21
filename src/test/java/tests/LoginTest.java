@@ -19,18 +19,6 @@ public class LoginTest extends BaseTest {
         PlaywrightAssertions.assertThat(page).not()
                 .hasURL(ConfigReader.get("frontend.url"));
     }
-
-//    @Test
-//    public void adminShouldNotLoginWithWrongEmail() {
-//        LoginPage loginPage = new LoginPage(page);
-//
-//        loginPage.openHomePage();
-//        loginPage.openLoginForm();
-//
-//        loginPage.login("wrongemail@example.com", ConfigReader.get("admin.password"));
-//
-//        PlaywrightAssertions.assertThat(page).hasURL(ConfigReader.get("frontend.url"));
-//    }
 @Test
 public void adminShouldNotLoginWithWrongEmail() {
     LoginPage loginPage = new LoginPage(page);
@@ -43,17 +31,6 @@ public void adminShouldNotLoginWithWrongEmail() {
     PlaywrightAssertions.assertThat(page)
             .hasURL(ConfigReader.get("login.url"));
 }
-//    @Test
-//    public void adminShouldNotLoginWithWrongPassword() {
-//        LoginPage loginPage = new LoginPage(page);
-//
-//        loginPage.openHomePage();
-//        loginPage.openLoginForm();
-//
-//        loginPage.login(ConfigReader.get("admin.email"), "WrongPassword@123");
-//
-//        PlaywrightAssertions.assertThat(page).hasURL(ConfigReader.get("frontend.url"));
-//    }
 @Test
 public void adminShouldNotLoginWithWrongPassword() {
     LoginPage loginPage = new LoginPage(page);
