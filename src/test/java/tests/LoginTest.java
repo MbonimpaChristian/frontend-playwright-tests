@@ -17,7 +17,7 @@ public class LoginTest extends BaseTest {
         loginPage.loginAsAdmin();
 
         PlaywrightAssertions.assertThat(page).not()
-                .hasURL(ConfigReader.get("frontend.url"));
+                .hasURL(ConfigReader.get("home.url"));
     }
 @Test
 public void adminShouldNotLoginWithWrongEmail() {
