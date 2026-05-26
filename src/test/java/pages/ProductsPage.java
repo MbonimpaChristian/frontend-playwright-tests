@@ -23,13 +23,6 @@ public class ProductsPage {
                     "div:has(button:has-text('Add to Cart')), " +
                     "div:has-text('RWF'), " +
                     "div:has-text('Frw')";
-
-//    private final String searchInput =
-//            "input[placeholder*='Search products'], " +
-//                    "input[placeholder*='Search'], " +
-//                    "input[placeholder*='search'], " +
-//                    "input[type='search'], " +
-//                    "input[type='text']";
 private final String searchIconButton =
         "button:has(svg.lucide-search), button:has(.lucide-search)";
 
@@ -40,13 +33,28 @@ private final String searchIconButton =
                     "input[type='search'], " +
                     "input[type='text']";
 
+    private final String womenFashionCategory =
+            "text=Women's Fashion";
+
+    private final String menFashionCategory =
+            "text=Men's Fashion";
+
+    private final String electronicsCategory =
+            "text=Electronics";
+
+    private final String homeLivingCategory =
+            "text=Home & Living";
+
+    private final String flashSalesCategory =
+            "text=Flash Sales";
+
     public ProductsPage(Page page) {
         this.page = page;
     }
 
-    // =========================
+
     // Page/body debug methods
-    // =========================
+
 
     public Locator getPageBody() {
         return page.locator("body");
@@ -131,9 +139,9 @@ private final String searchIconButton =
         System.out.println("=======================================");
     }
 
-    // =========================
+
     // Product methods
-    // =========================
+
 
     public Locator getFirstProductContainer() {
         return page.locator(productContainer).first();
@@ -143,9 +151,9 @@ private final String searchIconButton =
         return page.locator(productContainer).count();
     }
 
-    // =========================
+
     // Add to cart methods
-    // =========================
+
 
     public Locator getFirstAddToCartButton() {
         return page.locator(addToCartButton).first();
@@ -160,9 +168,9 @@ private final String searchIconButton =
         page.waitForTimeout(1000);
     }
 
-    // =========================
+
     // Cart methods
-    // =========================
+
 
     public Locator getCartButton() {
         return page.locator(cartButton).first();
@@ -172,54 +180,6 @@ private final String searchIconButton =
         page.locator(cartButton).first().click();
         page.waitForLoadState();
     }
-
-    // =========================
-    // Search methods
-    // =========================
-
-    /*
-      For now, we use button index because the search icon is an icon-only button.
-      If this clicks the wrong button, change nth(0) to nth(1), nth(2), etc.
-      The debug output will help us identify the correct button.
-    */
-//    public Locator getSearchIconButton() {
-//        return page.locator("button").nth(0);
-//    }
-//
-//    public void clickSearchIconButton() {
-//        page.locator("button").nth(0).click();
-//        page.waitForTimeout(1000);
-//    }
-//
-//    public Locator getSearchInput() {
-//        return page.locator(searchInput).first();
-//    }
-//
-//    public int getSearchInputCount() {
-//        return page.locator(searchInput).count();
-//    }
-//
-//    public void searchProductWithoutEnter(String productName) {
-//        clickSearchIconButton();
-//        page.locator(searchInput).first().fill(productName);
-//        page.waitForTimeout(1000);
-//    }
-//
-//    public void searchProduct(String productName) {
-//        clickSearchIconButton();
-//        page.locator(searchInput).first().fill(productName);
-//        page.keyboard().press("Enter");
-//        page.waitForTimeout(2000);
-//    }
-//
-//    public String getSearchInputValue() {
-//        return page.locator(searchInput).first().inputValue();
-//    }
-//
-//    public void clearSearchInput() {
-//        page.locator(searchInput).first().clear();
-//        page.waitForTimeout(1000);
-//    }
     public Locator getSearchIconButton() {
         return page.locator(
                 "button:has(svg), " +
@@ -269,5 +229,59 @@ private final String searchIconButton =
     public void clearSearchInput() {
         page.locator(searchInput).first().clear();
         page.waitForTimeout(1000);
+    }
+
+
+// Category navigation methods
+
+
+    public Locator getWomenFashionCategory() {
+        return page.locator(womenFashionCategory).first();
+    }
+
+    public Locator getMenFashionCategory() {
+        return page.locator(menFashionCategory).first();
+    }
+
+    public Locator getElectronicsCategory() {
+        return page.locator(electronicsCategory).first();
+    }
+
+    public Locator getHomeLivingCategory() {
+        return page.locator(homeLivingCategory).first();
+    }
+
+    public Locator getFlashSalesCategory() {
+        return page.locator(flashSalesCategory).first();
+    }
+
+    public void clickWomenFashionCategory() {
+        page.locator(womenFashionCategory).first().click();
+        page.waitForLoadState();
+        page.waitForTimeout(10000);
+    }
+
+    public void clickMenFashionCategory() {
+        page.locator(menFashionCategory).first().click();
+        page.waitForLoadState();
+        page.waitForTimeout(10000);
+    }
+
+    public void clickElectronicsCategory() {
+        page.locator(electronicsCategory).first().click();
+        page.waitForLoadState();
+        page.waitForTimeout(10000);
+    }
+
+    public void clickHomeLivingCategory() {
+        page.locator(homeLivingCategory).first().click();
+        page.waitForLoadState();
+        page.waitForTimeout(10000);
+    }
+
+    public void clickFlashSalesCategory() {
+        page.locator(flashSalesCategory).first().click();
+        page.waitForLoadState();
+        page.waitForTimeout(10000);
     }
 }
