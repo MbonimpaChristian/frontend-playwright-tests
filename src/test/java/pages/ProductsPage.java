@@ -52,10 +52,6 @@ private final String searchIconButton =
         this.page = page;
     }
 
-
-    // Page/body debug methods
-
-
     public Locator getPageBody() {
         return page.locator("body");
     }
@@ -140,9 +136,6 @@ private final String searchIconButton =
     }
 
 
-    // Product methods
-
-
     public Locator getFirstProductContainer() {
         return page.locator(productContainer).first();
     }
@@ -150,10 +143,6 @@ private final String searchIconButton =
     public int getProductContainerCount() {
         return page.locator(productContainer).count();
     }
-
-
-    // Add to cart methods
-
 
     public Locator getFirstAddToCartButton() {
         return page.locator(addToCartButton).first();
@@ -167,9 +156,6 @@ private final String searchIconButton =
         page.locator(addToCartButton).first().click();
         page.waitForTimeout(1000);
     }
-
-
-    // Cart methods
 
 
     public Locator getCartButton() {
@@ -231,10 +217,6 @@ private final String searchIconButton =
         page.waitForTimeout(1000);
     }
 
-
-// Category navigation methods
-
-
     public Locator getWomenFashionCategory() {
         return page.locator(womenFashionCategory).first();
     }
@@ -258,30 +240,30 @@ private final String searchIconButton =
     public void clickWomenFashionCategory() {
         page.locator(womenFashionCategory).first().click();
         page.waitForLoadState();
-        page.waitForTimeout(10000);
+        page.waitForTimeout(5000);
     }
 
     public void clickMenFashionCategory() {
         page.locator(menFashionCategory).first().click();
         page.waitForLoadState();
-        page.waitForTimeout(10000);
+        page.waitForTimeout(5000);
     }
 
     public void clickElectronicsCategory() {
         page.locator(electronicsCategory).first().click();
         page.waitForLoadState();
-        page.waitForTimeout(10000);
+        page.waitForTimeout(5000);
     }
 
     public void clickHomeLivingCategory() {
         page.locator(homeLivingCategory).first().click();
         page.waitForLoadState();
-        page.waitForTimeout(10000);
+        page.waitForTimeout(5000);
     }
 
     public void clickFlashSalesCategory() {
         page.locator(flashSalesCategory).first().click();
         page.waitForLoadState();
-        page.waitForTimeout(10000);
+        page.waitForTimeout(5000);
     }
 }
