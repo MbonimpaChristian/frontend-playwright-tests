@@ -26,6 +26,41 @@ public class AuthPayloads {
                 """;
     }
 
+    public static String registerPayload(String firstName, String lastName, String email, String password, String phone) {
+        return """
+                {
+                  "firstName": "%s",
+                  "lastName": "%s",
+                  "email": "%s",
+                  "password": "%s",
+                  "phone": "%s"
+                }
+                """.formatted(firstName, lastName, email, password, phone);
+    }
+
+    public static String registerWithoutEmailPayload() {
+        return """
+                {
+                  "firstName": "Chris",
+                  "lastName": "Mbonimpa",
+                  "password": "Password@123",
+                  "phone": "0780000000"
+                }
+                """;
+    }
+
+    public static String registerWithInvalidEmailPayload() {
+        return """
+                {
+                  "firstName": "Chris",
+                  "lastName": "Mbonimpa",
+                  "email": "wrong-email-format",
+                  "password": "Password@123",
+                  "phone": "0780000000"
+                }
+                """;
+    }
+
     public static String forgotPasswordPayload(String email) {
         return """
                 {
