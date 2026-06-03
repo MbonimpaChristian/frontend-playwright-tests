@@ -20,7 +20,7 @@ public class CategoryApiTest extends BaseApiTest {
 
         Assert.assertEquals(
                 response.statusCode(),
-                401,
+                200,
                 "Expected GET /categories to return 200"
         );
     }
