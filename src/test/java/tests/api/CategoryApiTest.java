@@ -4,7 +4,6 @@ import api.BaseApiTest;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import api.status.StatusCode;
 
 public class CategoryApiTest extends BaseApiTest {
 
@@ -21,8 +20,8 @@ public class CategoryApiTest extends BaseApiTest {
 
         Assert.assertEquals(
                 response.statusCode(),
-                StatusCode.OK,
-                "Expected GET /categories to return 200 OK"
+                200,
+                "Expected GET /categories to return 200"
         );
     }
 
@@ -72,9 +71,8 @@ public class CategoryApiTest extends BaseApiTest {
                         .response();
 
         Assert.assertTrue(
-                response.statusCode() == StatusCode.BAD_REQUEST
-                        || response.statusCode() == StatusCode.NOT_FOUND,
-                "Expected invalid category slug to return 400 Bad Request or 404 Not Found"
+                response.statusCode() == 400 || response.statusCode() == 404,
+                "Expected invalid category slug to return 400 or 404"
         );
     }
 }

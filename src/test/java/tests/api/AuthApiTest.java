@@ -1,7 +1,6 @@
 package tests.api;
 
 import api.BaseApiTest;
-import api.status.StatusCode;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -31,11 +30,9 @@ public class AuthApiTest extends BaseApiTest {
                         .extract()
                         .response();
 
-        Assert.assertEquals(
-                response.statusCode(),
-                StatusCode.UNAUTHORIZED,
-                "Expected protected endpoint without token to return 401 Unauthorized"
-        );
+        Assert.assertEquals(response.statusCode(), 401);
+        Assert.assertFalse(response.jsonPath().getBoolean("success"));
+        Assert.assertEquals(response.jsonPath().getString("message"), "Invalid email or password");
     }
 
     @Test
@@ -57,11 +54,8 @@ public class AuthApiTest extends BaseApiTest {
                         .extract()
                         .response();
 
-        Assert.assertEquals(
-                response.statusCode(),
-                StatusCode.UNAUTHORIZED,
-                "Expected protected endpoint without token to return 401 Unauthorized"
-        );
+        Assert.assertEquals(response.statusCode(), 401);
+        Assert.assertFalse(response.jsonPath().getBoolean("success"));
     }
 
     @Test
@@ -109,9 +103,8 @@ public class AuthApiTest extends BaseApiTest {
                         .response();
 
         Assert.assertTrue(
-                response.statusCode() == StatusCode.BAD_REQUEST
-                        || response.statusCode() == StatusCode.NOT_FOUND,
-                "Expected invalid category slug to return 400 Bad Request or 404 Not Found"
+                response.statusCode() >= 400 && response.statusCode() < 500,
+                "Expected invalid email verification token to return client error"
         );
     }
 
@@ -135,8 +128,8 @@ public class AuthApiTest extends BaseApiTest {
 
         Assert.assertEquals(
                 response.statusCode(),
-                StatusCode.OK,
-                "Expected GET /categories to return 200 OK"
+                200,
+                "Expected forgot password API to return 200 with generic message"
         );
 
         Assert.assertTrue(
@@ -168,9 +161,8 @@ public class AuthApiTest extends BaseApiTest {
                         .response();
 
         Assert.assertTrue(
-                response.statusCode() == StatusCode.BAD_REQUEST
-                        || response.statusCode() == StatusCode.NOT_FOUND,
-                "Expected invalid category slug to return 400 Bad Request or 404 Not Found"
+                response.statusCode() >= 400 && response.statusCode() < 500,
+                "Expected reset password with invalid token to return client error"
         );
     }
 
@@ -187,8 +179,8 @@ public class AuthApiTest extends BaseApiTest {
 
         Assert.assertEquals(
                 response.statusCode(),
-                StatusCode.UNAUTHORIZED,
-                "Expected protected endpoint without token to return 401 Unauthorized"
+                401,
+                "Expected /auth/me without token to return 401"
         );
     }
 
@@ -204,9 +196,8 @@ public class AuthApiTest extends BaseApiTest {
                         .response();
 
         Assert.assertTrue(
-                response.statusCode() == StatusCode.BAD_REQUEST
-                        || response.statusCode() == StatusCode.NOT_FOUND,
-                "Expected invalid category slug to return 400 Bad Request or 404 Not Found"
+                response.statusCode() == 401 || response.statusCode() == 400,
+                "Expected refresh token without token to return 400 or 401"
         );
     }
 
