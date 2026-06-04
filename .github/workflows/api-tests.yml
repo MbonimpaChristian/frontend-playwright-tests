@@ -1,0 +1,57 @@
+name: API Automation Tests
+
+on:
+  push:
+    branches:
+      - main
+      - ft/frontend-setup
+      - ft/product-management-Api-tests
+      - ft/category-Api-tests
+      - ft/user-Api-test
+
+  pull_request:
+    branches:
+      - main
+      - ft/frontend-setup
+
+jobs:
+  api-tests:
+    name: Run REST Assured API Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      - name: Run Product API tests
+        run: mvn test -Dtest=ProductApiTest
+
+      - name: Run Category API tests
+        run: mvn test -Dtest=CategoryApiTest
+
+      - name: Run User API tests
+        run: mvn test -Dtest=UserApiTest
+
+      - name: Run Authentication API tests
+        run: mvn test -Dtest=Auth*ApiTest
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-reports
+          path: target/surefire-reports
