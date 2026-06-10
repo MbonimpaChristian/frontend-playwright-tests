@@ -13,6 +13,10 @@ public class ProductApiTest extends BaseApiTest {
         return getRequest(ProductEndpoints.PRODUCTS);
     }
 
+    private Response getFlashSalesProductsResponse() {
+        return getRequest(ProductEndpoints.FLASH_SALES_PRODUCTS);
+    }
+
     private Response getTrendingProductsResponse() {
         return getRequest(ProductEndpoints.TRENDING_PRODUCTS);
     }
@@ -76,6 +80,37 @@ public class ProductApiTest extends BaseApiTest {
         Assert.assertTrue(
                 response.time() < 5000,
                 "Expected GET /products/trending response time to be below 5000 ms"
+        );
+    }
+
+    @Test
+    public void getFlashSalesProductsShouldReturnSuccess() {
+        Response response = getFlashSalesProductsResponse();
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.OK,
+                "Expected GET /products/flash-sales to return 200 OK"
+        );
+    }
+
+    @Test
+    public void getFlashSalesProductsShouldReturnResponseBody() {
+        Response response = getFlashSalesProductsResponse();
+
+        Assert.assertFalse(
+                response.asString().isEmpty(),
+                "Expected flash sales products response body not to be empty"
+        );
+    }
+
+    @Test
+    public void getFlashSalesProductsShouldRespondWithinFiveSeconds() {
+        Response response = getFlashSalesProductsResponse();
+
+        Assert.assertTrue(
+                response.time() < 5000,
+                "Expected GET /products/flash-sales response time to be below 5000 ms"
         );
     }
 }
