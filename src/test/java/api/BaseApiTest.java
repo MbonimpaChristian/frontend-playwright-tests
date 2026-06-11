@@ -18,16 +18,12 @@ public class BaseApiTest {
     protected Response getRequest(String endpoint) {
         validateEndpoint(endpoint);
 
-        System.out.println("REQUEST ENDPOINT: " + endpoint);
-
         return RestAssured
                 .given()
                 .spec(requestSpec)
-                .log().all()
                 .when()
                 .get(endpoint)
                 .then()
-                .log().all()
                 .extract()
                 .response();
     }
@@ -39,11 +35,9 @@ public class BaseApiTest {
                 .given()
                 .spec(requestSpec)
                 .body(requestBody)
-                .log().all()
                 .when()
                 .post(endpoint)
                 .then()
-                .log().all()
                 .extract()
                 .response();
     }
@@ -55,11 +49,9 @@ public class BaseApiTest {
                 .given()
                 .spec(requestSpec)
                 .body(requestBody)
-                .log().all()
                 .when()
                 .put(endpoint)
                 .then()
-                .log().all()
                 .extract()
                 .response();
     }
@@ -70,11 +62,9 @@ public class BaseApiTest {
         return RestAssured
                 .given()
                 .spec(requestSpec)
-                .log().all()
                 .when()
                 .delete(endpoint)
                 .then()
-                .log().all()
                 .extract()
                 .response();
     }

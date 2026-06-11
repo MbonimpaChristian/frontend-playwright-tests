@@ -1,6 +1,8 @@
 package api.specs;
 
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import utils.ConfigReader;
@@ -19,14 +21,13 @@ public class SpecBuilder {
             throw new IllegalArgumentException("api.base.path is missing in config.properties");
         }
 
-        System.out.println("API BASE URI: " + baseUri);
-        System.out.println("API BASE PATH: " + basePath);
-
         return new RequestSpecBuilder()
                 .setBaseUri(baseUri)
                 .setBasePath(basePath)
                 .setContentType(ContentType.JSON)
                 .setAccept(ContentType.JSON)
+                .addFilter(new RequestLoggingFilter())
+                .addFilter(new ResponseLoggingFilter())
                 .build();
     }
 

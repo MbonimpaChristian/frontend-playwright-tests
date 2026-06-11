@@ -24,6 +24,7 @@ public class ProductApiTest extends BaseApiTest {
     @Test
     public void getAllProductsShouldReturnSuccess() {
         Response response = getProductsResponse();
+        
 
         Assert.assertEquals(
                 response.statusCode(),
