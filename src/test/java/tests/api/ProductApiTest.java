@@ -13,105 +13,66 @@ public class ProductApiTest extends BaseApiTest {
         return getRequest(ProductEndpoints.PRODUCTS);
     }
 
-    private Response getFlashSalesProductsResponse() {
-        return getRequest(ProductEndpoints.FLASH_SALES_PRODUCTS);
-    }
-
-    private Response getTrendingProductsResponse() {
-        return getRequest(ProductEndpoints.TRENDING_PRODUCTS);
-    }
-
-    @Test
-    public void getAllProductsShouldReturnSuccess() {
+    private String getFirstProductSlug() {
         Response response = getProductsResponse();
-        
 
         Assert.assertEquals(
                 response.statusCode(),
                 StatusCode.OK,
-                "Expected GET /products to return 200 OK"
+                "Expected GET /products to return 200 OK before extracting slug"
         );
-    }
 
-    @Test
-    public void getAllProductsShouldReturnResponseBody() {
-        Response response = getProductsResponse();
+        String slug = response.jsonPath().getString("data[0].slug");
+
+        Assert.assertNotNull(
+                slug,
+                "Expected first product slug not to be null"
+        );
 
         Assert.assertFalse(
-                response.asString().isEmpty(),
-                "Expected products response body not to be empty"
+                slug.isBlank(),
+                "Expected first product slug not to be blank"
         );
+
+        return slug;
     }
 
     @Test
-    public void getAllProductsShouldRespondWithinFiveSeconds() {
-        Response response = getProductsResponse();
+    public void getSingleProductBySlugSuccess() {
+        String slug = getFirstProductSlug();
 
-        Assert.assertTrue(
-                response.time() < 5000,
-                "Expected GET /products response time to be below 5000 ms"
-        );
-    }
-
-    @Test
-    public void getTrendingProductsShouldReturnSuccess() {
-        Response response = getTrendingProductsResponse();
+        Response response = getRequest(ProductEndpoints.productBySlug(slug));
 
         Assert.assertEquals(
                 response.statusCode(),
                 StatusCode.OK,
-                "Expected GET /products/trending to return 200 OK"
+                "Expected GET /products/{slug} to return 200 OK"
         );
-    }
-
-    @Test
-    public void getTrendingProductsShouldReturnResponseBody() {
-        Response response = getTrendingProductsResponse();
 
         Assert.assertFalse(
                 response.asString().isEmpty(),
-                "Expected trending products response body not to be empty"
+                "Expected single product response body not to be empty"
         );
     }
 
     @Test
-    public void getTrendingProductsShouldRespondWithinFiveSeconds() {
-        Response response = getTrendingProductsResponse();
+    public void getSingleProductBySlugCorrectProduct() {
+        String slug = getFirstProductSlug();
 
-        Assert.assertTrue(
-                response.time() < 5000,
-                "Expected GET /products/trending response time to be below 5000 ms"
-        );
-    }
-
-    @Test
-    public void getFlashSalesProductsShouldReturnSuccess() {
-        Response response = getFlashSalesProductsResponse();
+        Response response = getRequest(ProductEndpoints.productBySlug(slug));
 
         Assert.assertEquals(
                 response.statusCode(),
                 StatusCode.OK,
-                "Expected GET /products/flash-sales to return 200 OK"
+                "Expected GET /products/{slug} to return 200 OK"
         );
-    }
 
-    @Test
-    public void getFlashSalesProductsShouldReturnResponseBody() {
-        Response response = getFlashSalesProductsResponse();
+        String actualSlug = response.jsonPath().getString("data.slug");
 
-        Assert.assertFalse(
-                response.asString().isEmpty(),
-                "Expected flash sales products response body not to be empty"
-        );
-    }
-
-    @Test
-    public void getFlashSalesProductsShouldRespondWithinFiveSeconds() {
-        Response response = getFlashSalesProductsResponse();
-
-        Assert.assertTrue(
-                response.time() < 5000,
-                "Expected GET /products/flash-sales response time to be below 5000 ms"
+        Assert.assertEquals(
+                actualSlug,
+                slug,
+                "Expected returned product slug to match requested slug"
         );
     }
 }
