@@ -1,78 +1,102 @@
 package tests.api;
 
 import api.BaseApiTest;
+import api.endpoints.AuthEndpoints;
 import api.endpoints.ProductEndpoints;
+import api.payloads.AuthPayloads;
+import api.payloads.ProductPayloads;
 import api.status.StatusCode;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import utils.ConfigReader;
 
 public class ProductApiTest extends BaseApiTest {
 
-    private Response getProductsResponse() {
-        return getRequest(ProductEndpoints.PRODUCTS);
-    }
-
-    private String getFirstProductSlug() {
-        Response response = getProductsResponse();
+    private String getAdminToken() {
+        Response response = postRequest(
+                AuthEndpoints.LOGIN,
+                AuthPayloads.loginPayload(
+                        ConfigReader.get("admin.email"),
+                        ConfigReader.get("admin.password")
+                )
+        );
 
         Assert.assertEquals(
                 response.statusCode(),
                 StatusCode.OK,
-                "Expected GET /products to return 200 OK before extracting slug"
+                "Expected admin login to return 200 OK"
         );
 
-        String slug = response.jsonPath().getString("data[0].slug");
+        String token = response.jsonPath().getString("data.accessToken");
+
+        if (token == null) {
+            token = response.jsonPath().getString("data.token");
+        }
+
+        if (token == null) {
+            token = response.jsonPath().getString("accessToken");
+        }
+
+        if (token == null) {
+            token = response.jsonPath().getString("token");
+        }
 
         Assert.assertNotNull(
-                slug,
-                "Expected first product slug not to be null"
+                token,
+                "Expected admin login response to contain token"
         );
 
-        Assert.assertFalse(
-                slug.isBlank(),
-                "Expected first product slug not to be blank"
-        );
-
-        return slug;
+        return token;
     }
 
     @Test
-    public void getSingleProductBySlugSuccess() {
-        String slug = getFirstProductSlug();
+    public void createProductWithoutToken() {
+        String uniqueValue = String.valueOf(System.currentTimeMillis());
 
-        Response response = getRequest(ProductEndpoints.productBySlug(slug));
+        Response response = postRequest(
+                ProductEndpoints.PRODUCTS,
+                ProductPayloads.createProductPayload(
+                        "QA Automation Backpack " + uniqueValue,
+                        "QA-BACKPACK-" + uniqueValue
+                )
+        );
 
         Assert.assertEquals(
                 response.statusCode(),
-                StatusCode.OK,
-                "Expected GET /products/{slug} to return 200 OK"
+                StatusCode.UNAUTHORIZED,
+                "Expected POST /products without token to return 401 Unauthorized"
         );
 
         Assert.assertFalse(
-                response.asString().isEmpty(),
-                "Expected single product response body not to be empty"
+                response.jsonPath().getBoolean("success"),
+                "Expected success to be false"
         );
     }
 
     @Test
-    public void getSingleProductBySlugCorrectProduct() {
-        String slug = getFirstProductSlug();
+    public void adminShouldCreateProductSuccessfully() {
+        String token = getAdminToken();
+        String uniqueValue = String.valueOf(System.currentTimeMillis());
 
-        Response response = getRequest(ProductEndpoints.productBySlug(slug));
+        Response response = postRequestWithToken(
+                ProductEndpoints.PRODUCTS,
+                ProductPayloads.createProductPayload(
+                        "QA Automation Backpack " + uniqueValue,
+                        "QA-BACKPACK-" + uniqueValue
+                ),
+                token
+        );
 
         Assert.assertEquals(
                 response.statusCode(),
-                StatusCode.OK,
-                "Expected GET /products/{slug} to return 200 OK"
+                StatusCode.CREATED,
+                "Expected admin to create product successfully"
         );
 
-        String actualSlug = response.jsonPath().getString("data.slug");
-
-        Assert.assertEquals(
-                actualSlug,
-                slug,
-                "Expected returned product slug to match requested slug"
+        Assert.assertTrue(
+                response.jsonPath().getBoolean("success"),
+                "Expected success to be true"
         );
     }
 }

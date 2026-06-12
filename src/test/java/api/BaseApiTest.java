@@ -74,4 +74,19 @@ public class BaseApiTest {
             throw new IllegalArgumentException("Endpoint must not be null or empty");
         }
     }
+
+    protected Response postRequestWithToken(String endpoint, String requestBody, String token) {
+        validateEndpoint(endpoint);
+
+        return io.restassured.RestAssured
+                .given()
+                .spec(requestSpec)
+                .header("Authorization", "Bearer " + token)
+                .body(requestBody)
+                .when()
+                .post(endpoint)
+                .then()
+                .extract()
+                .response();
+    }
 }
