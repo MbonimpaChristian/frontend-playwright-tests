@@ -2,6 +2,7 @@ package tests.api;
 
 import api.BaseApiTest;
 import api.endpoints.AuthEndpoints;
+import api.endpoints.CategoryEndpoints;
 import api.endpoints.ProductEndpoints;
 import api.payloads.AuthPayloads;
 import api.payloads.ProductPayloads;
@@ -52,13 +53,15 @@ public class ProductApiTest extends BaseApiTest {
 
     @Test
     public void createProductWithoutToken() {
+        String categoryId = getFirstCategoryId();
         String uniqueValue = String.valueOf(System.currentTimeMillis());
 
         Response response = postRequest(
                 ProductEndpoints.PRODUCTS,
                 ProductPayloads.createProductPayload(
                         "QA Automation Backpack " + uniqueValue,
-                        "QA-BACKPACK-" + uniqueValue
+                        "QA-BACKPACK-" + uniqueValue,
+                        categoryId
                 )
         );
 
@@ -73,17 +76,18 @@ public class ProductApiTest extends BaseApiTest {
                 "Expected success to be false"
         );
     }
-
     @Test
     public void adminShouldCreateProductSuccessfully() {
         String token = getAdminToken();
+        String categoryId = getFirstCategoryId();
         String uniqueValue = String.valueOf(System.currentTimeMillis());
 
         Response response = postRequestWithToken(
                 ProductEndpoints.PRODUCTS,
                 ProductPayloads.createProductPayload(
                         "QA Automation Backpack " + uniqueValue,
-                        "QA-BACKPACK-" + uniqueValue
+                        "QA-BACKPACK-" + uniqueValue,
+                        categoryId
                 ),
                 token
         );
@@ -98,5 +102,29 @@ public class ProductApiTest extends BaseApiTest {
                 response.jsonPath().getBoolean("success"),
                 "Expected success to be true"
         );
+    }
+
+    private String getFirstCategoryId() {
+        Response response = getRequest(CategoryEndpoints.CATEGORIES);
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.OK,
+                "Expected GET /categories to return 200 OK"
+        );
+
+        String categoryId = response.jsonPath().getString("data[0].id");
+
+        Assert.assertNotNull(
+                categoryId,
+                "Expected first category id not to be null"
+        );
+
+        Assert.assertFalse(
+                categoryId.isBlank(),
+                "Expected first category id not to be blank"
+        );
+
+        return categoryId;
     }
 }

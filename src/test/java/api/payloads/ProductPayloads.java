@@ -2,14 +2,14 @@ package api.payloads;
 
 public class ProductPayloads {
 
-    public static String createProductPayload(String uniqueName, String uniqueSku) {
+    public static String createProductPayload(String uniqueName, String uniqueSku, String categoryId) {
         return """
                 {
                   "name": "%s",
                   "description": "A product created from REST Assured API automation test",
                   "price": 45.99,
                   "comparePrice": 69.99,
-                  "categoryId": "ddb77290-34ef-4e20-a19b-febca2c5c9d1",
+                  "categoryId": "%s",
                   "tags": [
                     "qa",
                     "automation",
@@ -29,7 +29,7 @@ public class ProductPayloads {
                     }
                   ]
                 }
-                """.formatted(uniqueName, uniqueSku);
+                """.formatted(uniqueName, categoryId, uniqueSku);
     }
 
     private ProductPayloads() {
