@@ -1,35 +1,53 @@
 package api.payloads;
 
+import api.testdata.ProductTestData;
+
 public class ProductPayloads {
 
     public static String createProductPayload(String uniqueName, String uniqueSku, String categoryId) {
         return """
                 {
                   "name": "%s",
-                  "description": "A product created from REST Assured API automation test",
-                  "price": 45.99,
-                  "comparePrice": 69.99,
+                  "description": "%s",
+                  "price": %.2f,
+                  "comparePrice": %.2f,
                   "categoryId": "%s",
                   "tags": [
-                    "qa",
-                    "automation",
-                    "api-test"
+                    "%s",
+                    "%s",
+                    "%s"
                   ],
                   "isFeatured": true,
                   "isFlashSale": true,
-                  "flashSalePrice": 39.99,
+                  "flashSalePrice": %.2f,
                   "variants": [
                     {
-                      "size": "Large",
-                      "color": "Matte Black",
-                      "colorHex": "#000000",
+                      "size": "%s",
+                      "color": "%s",
+                      "colorHex": "%s",
                       "sku": "%s",
-                      "stock": 120,
-                      "price": 45.99
+                      "stock": %d,
+                      "price": %.2f
                     }
                   ]
                 }
-                """.formatted(uniqueName, categoryId, uniqueSku);
+                """.formatted(
+                uniqueName,
+                ProductTestData.PRODUCT_DESCRIPTION,
+                ProductTestData.PRODUCT_PRICE,
+                ProductTestData.PRODUCT_COMPARE_PRICE,
+                categoryId,
+                ProductTestData.TAG_QA,
+                ProductTestData.TAG_AUTOMATION,
+                ProductTestData.TAG_API_TEST,
+                ProductTestData.PRODUCT_FLASH_SALE_PRICE,
+                ProductTestData.VARIANT_SIZE,
+                ProductTestData.VARIANT_COLOR,
+                ProductTestData.VARIANT_COLOR_HEX,
+                uniqueSku,
+                ProductTestData.VARIANT_STOCK,
+                ProductTestData.PRODUCT_PRICE
+        );
     }
 
     private ProductPayloads() {
