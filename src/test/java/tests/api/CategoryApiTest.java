@@ -7,6 +7,8 @@ import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 public class CategoryApiTest extends BaseApiTest {
 
     private Response getCategoriesResponse() {
@@ -22,19 +24,17 @@ public class CategoryApiTest extends BaseApiTest {
                 "Expected GET /categories to return 200 OK before extracting slug"
         );
 
-        String slug = response.jsonPath().getString("data[0].slug");
+        List<String> slugs = response.jsonPath().getList("data.slug");
 
         Assert.assertNotNull(
-                slug,
-                "Expected first category slug not to be null"
+                slugs,
+                "Expected category slugs list not to be null"
         );
 
-        Assert.assertFalse(
-                slug.isBlank(),
-                "Expected first category slug not to be blank"
-        );
-
-        return slug;
+        return slugs.stream()
+                .filter(slug -> slug != null && !slug.isBlank())
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected at least one valid category slug"));
     }
 
     @Test
@@ -68,6 +68,11 @@ public class CategoryApiTest extends BaseApiTest {
                 response.statusCode(),
                 StatusCode.OK,
                 "Expected GET /categories/{slug} to return 200 OK"
+        );
+
+        Assert.assertFalse(
+                response.asString().isEmpty(),
+                "Expected category by slug response body not to be empty"
         );
     }
 }

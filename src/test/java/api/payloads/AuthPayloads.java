@@ -32,6 +32,29 @@ public class AuthPayloads {
                 """.formatted(firstName, lastName, email, password, phone);
     }
 
+    public static String registerWithoutEmailPayload() {
+        return """
+                {
+                  "firstName": "Chris",
+                  "lastName": "Mbonimpa",
+                  "password": "Password@123",
+                  "phone": "0780000000"
+                }
+                """;
+    }
+
+    public static String registerWithInvalidEmailPayload() {
+        return """
+                {
+                  "firstName": "Chris",
+                  "lastName": "Mbonimpa",
+                  "email": "wrong-email-format",
+                  "password": "Password@123",
+                  "phone": "0780000000"
+                }
+                """;
+    }
+
     public static String emptyRegisterPayload() {
         return """
                 {}
