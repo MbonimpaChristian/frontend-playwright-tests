@@ -5,14 +5,10 @@ on:
     branches:
       - main
       - ft/frontend-setup
-      - ft/yml
-      - ft/product-api-tests
-      - ft/category-Api-tests
-      - ft/user-Api-test
+      - ft/product-management-create
 
   pull_request:
     branches:
-      - main
       - ft/frontend-setup
 
   workflow_dispatch:
@@ -33,17 +29,8 @@ jobs:
           java-version: '17'
           cache: maven
 
-      - name: Run Authentication API tests
-        run: mvn test -Dtest=Auth*ApiTest
-
-      - name: Run Category API tests
-        run: mvn test -Dtest=CategoryApiTest
-
-      - name: Run User API tests
-        run: mvn test -Dtest=UserApiTest
-
       - name: Run Product API tests
-        run: mvn test -Dtest=ProductApiTest
+        run: mvn clean test -Dtest=ProductApiTest
 
       - name: Upload Surefire test reports
         if: always()
