@@ -136,6 +136,12 @@ public class ProductApiTest extends BaseApiTest {
         );
 
         Assert.assertEquals(
+                response.jsonPath().getString("data.id"),
+                productId,
+                "Expected updated product id to match the created product id"
+        );
+
+        Assert.assertEquals(
                 response.jsonPath().getString("data.name"),
                 updatedName,
                 "Expected product name to be updated"
