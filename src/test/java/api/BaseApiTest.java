@@ -104,4 +104,18 @@ public class BaseApiTest {
                 .extract()
                 .response();
     }
+
+    protected Response deleteRequestWithToken(String endpoint, String token) {
+        validateEndpoint(endpoint);
+
+        return RestAssured
+                .given()
+                .spec(requestSpec)
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .delete(endpoint)
+                .then()
+                .extract()
+                .response();
+    }
 }
