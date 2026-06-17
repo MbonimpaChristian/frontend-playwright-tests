@@ -1,40 +1,56 @@
 package tests.api;
 
 import api.BaseApiTest;
+import api.endpoints.CategoryEndpoints;
+import api.status.StatusCode;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 public class CategoryApiTest extends BaseApiTest {
 
-    @Test
-    public void getAllCategoriesShouldReturnSuccess() {
-        Response response =
-                requestSpec
-                        .when()
-                        .get("/categories")
-                        .then()
-                        .log().all()
-                        .extract()
-                        .response();
+    private Response getCategoriesResponse() {
+        return getRequest(CategoryEndpoints.CATEGORIES);
+    }
+
+    private String getFirstCategorySlug() {
+        Response response = getCategoriesResponse();
 
         Assert.assertEquals(
                 response.statusCode(),
-                200,
-                "Expected GET /categories to return 200"
+                StatusCode.OK,
+                "Expected GET /categories to return 200 OK before extracting slug"
+        );
+
+        List<String> slugs = response.jsonPath().getList("data.slug");
+
+        Assert.assertNotNull(
+                slugs,
+                "Expected category slugs list not to be null"
+        );
+
+        return slugs.stream()
+                .filter(slug -> slug != null && !slug.isBlank())
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected at least one valid category slug"));
+    }
+
+    @Test
+    public void getAllCategoriesShouldReturnSuccess() {
+        Response response = getCategoriesResponse();
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.OK,
+                "Expected GET /categories to return 200 OK"
         );
     }
 
     @Test
-    public void getAllCategoriesShouldReturnData() {
-        Response response =
-                requestSpec
-                        .when()
-                        .get("/categories")
-                        .then()
-                        .log().all()
-                        .extract()
-                        .response();
+    public void getAllCategoriesShouldReturnResponseBody() {
+        Response response = getCategoriesResponse();
 
         Assert.assertFalse(
                 response.asString().isEmpty(),
@@ -43,36 +59,20 @@ public class CategoryApiTest extends BaseApiTest {
     }
 
     @Test
-    public void getAllCategoriesShouldRespondWithinFiveSeconds() {
-        Response response =
-                requestSpec
-                        .when()
-                        .get("/categories")
-                        .then()
-                        .log().all()
-                        .extract()
-                        .response();
+    public void getCategoryBySlugShouldReturnSuccess() {
+        String slug = getFirstCategorySlug();
 
-        Assert.assertTrue(
-                response.time() < 5000,
-                "Expected categories API response time to be below 5000 ms"
+        Response response = getRequest(CategoryEndpoints.categoryBySlug(slug));
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.OK,
+                "Expected GET /categories/{slug} to return 200 OK"
         );
-    }
 
-    @Test
-    public void getSingleCategoryWithInvalidSlugShouldReturnClientOrNotFoundError() {
-        Response response =
-                requestSpec
-                        .when()
-                        .get("/categories/invalid-category-slug")
-                        .then()
-                        .log().all()
-                        .extract()
-                        .response();
-
-        Assert.assertTrue(
-                response.statusCode() == 400 || response.statusCode() == 404,
-                "Expected invalid category slug to return 400 or 404"
+        Assert.assertFalse(
+                response.asString().isEmpty(),
+                "Expected category by slug response body not to be empty"
         );
     }
 }

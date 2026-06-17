@@ -20,12 +20,6 @@ public class AuthPayloads {
                 """;
     }
 
-    public static String emptyRegisterPayload() {
-        return """
-                {}
-                """;
-    }
-
     public static String registerPayload(String firstName, String lastName, String email, String password, String phone) {
         return """
                 {
@@ -58,6 +52,12 @@ public class AuthPayloads {
                   "password": "Password@123",
                   "phone": "0780000000"
                 }
+                """;
+    }
+
+    public static String emptyRegisterPayload() {
+        return """
+                {}
                 """;
     }
 
