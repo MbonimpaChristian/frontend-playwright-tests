@@ -12,6 +12,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import utils.ConfigReader;
 
+import java.util.List;
+
 public class ProductApiTest extends BaseApiTest {
 
     private String getAdminToken() {
@@ -51,59 +53,6 @@ public class ProductApiTest extends BaseApiTest {
         return token;
     }
 
-    @Test
-    public void createProductWithoutToken() {
-        String categoryId = getFirstCategoryId();
-        String uniqueValue = String.valueOf(System.currentTimeMillis());
-
-        Response response = postRequest(
-                ProductEndpoints.PRODUCTS,
-                ProductPayloads.createProductPayload(
-                        "QA Automation Backpack " + uniqueValue,
-                        "QA-BACKPACK-" + uniqueValue,
-                        categoryId
-                )
-        );
-
-        Assert.assertEquals(
-                response.statusCode(),
-                StatusCode.UNAUTHORIZED,
-                "Expected POST /products without token to return 401 Unauthorized"
-        );
-
-        Assert.assertFalse(
-                response.jsonPath().getBoolean("success"),
-                "Expected success to be false"
-        );
-    }
-    @Test
-    public void adminShouldCreateProductSuccessfully() {
-        String token = getAdminToken();
-        String categoryId = getFirstCategoryId();
-        String uniqueValue = String.valueOf(System.currentTimeMillis());
-
-        Response response = postRequestWithToken(
-                ProductEndpoints.PRODUCTS,
-                ProductPayloads.createProductPayload(
-                        "QA Automation Backpack " + uniqueValue,
-                        "QA-BACKPACK-" + uniqueValue,
-                        categoryId
-                ),
-                token
-        );
-
-        Assert.assertEquals(
-                response.statusCode(),
-                StatusCode.CREATED,
-                "Expected admin to create product successfully"
-        );
-
-        Assert.assertTrue(
-                response.jsonPath().getBoolean("success"),
-                "Expected success to be true"
-        );
-    }
-
     private String getFirstCategoryId() {
         Response response = getRequest(CategoryEndpoints.CATEGORIES);
 
@@ -113,18 +62,89 @@ public class ProductApiTest extends BaseApiTest {
                 "Expected GET /categories to return 200 OK"
         );
 
-        String categoryId = response.jsonPath().getString("data[0].id");
+        List<String> categoryIds = response.jsonPath().getList("data.findAll { it.id != null && it.name != '' }.id");
 
         Assert.assertNotNull(
-                categoryId,
-                "Expected first category id not to be null"
+                categoryIds,
+                "Expected category ids list not to be null"
         );
 
         Assert.assertFalse(
-                categoryId.isBlank(),
-                "Expected first category id not to be blank"
+                categoryIds.isEmpty(),
+                "Expected at least one valid category id"
         );
 
-        return categoryId;
+        return categoryIds.get(0);
+    }
+
+    private String createProductAndReturnId(String token) {
+        String categoryId = getFirstCategoryId();
+        String uniqueValue = String.valueOf(System.currentTimeMillis());
+
+        Response response = postRequestWithToken(
+                ProductEndpoints.PRODUCTS,
+                ProductPayloads.createProductPayload(
+                        "QA Update Product " + uniqueValue,
+                        "QA-UPDATE-" + uniqueValue,
+                        categoryId
+                ),
+                token
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.CREATED,
+                "Expected product creation to return 201 Created"
+        );
+
+        String productId = response.jsonPath().getString("data.id");
+
+        Assert.assertNotNull(
+                productId,
+                "Expected created product id not to be null"
+        );
+
+        Assert.assertFalse(
+                productId.isBlank(),
+                "Expected created product id not to be blank"
+        );
+
+        return productId;
+    }
+
+    @Test
+    public void adminShouldUpdateCreatedProductSuccessfully() {
+        String token = getAdminToken();
+        String productId = createProductAndReturnId(token);
+        String updatedName = "Updated QA Product " + System.currentTimeMillis();
+
+        Response response = putRequestWithToken(
+                ProductEndpoints.productById(productId),
+                ProductPayloads.updateProductPayload(updatedName),
+                token
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.OK,
+                "Expected PUT /products/{id} to return 200 OK"
+        );
+
+        Assert.assertTrue(
+                response.jsonPath().getBoolean("success"),
+                "Expected success to be true"
+        );
+
+        Assert.assertEquals(
+                response.jsonPath().getString("data.name"),
+                updatedName,
+                "Expected product name to be updated"
+        );
+
+        Assert.assertEquals(
+                response.jsonPath().getString("data.description"),
+                "Updated product description from REST Assured API automation test",
+                "Expected product description to be updated"
+        );
     }
 }

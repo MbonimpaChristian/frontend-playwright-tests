@@ -89,4 +89,19 @@ public class BaseApiTest {
                 .extract()
                 .response();
     }
+
+    protected Response putRequestWithToken(String endpoint, String requestBody, String token) {
+        validateEndpoint(endpoint);
+
+        return RestAssured
+                .given()
+                .spec(requestSpec)
+                .header("Authorization", "Bearer " + token)
+                .body(requestBody)
+                .when()
+                .put(endpoint)
+                .then()
+                .extract()
+                .response();
+    }
 }

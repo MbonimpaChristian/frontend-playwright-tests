@@ -50,6 +50,20 @@ public class ProductPayloads {
         );
     }
 
+    public static String updateProductPayload(String updatedName) {
+        return """
+            {
+              "name": "%s",
+              "description": "Updated product description from REST Assured API automation test",
+              "price": 55.99,
+              "comparePrice": 79.99,
+              "isFeatured": false,
+              "isFlashSale": false,
+              "flashSalePrice": 0
+            }
+            """.formatted(updatedName);
+    }
+
     private ProductPayloads() {
     }
 }

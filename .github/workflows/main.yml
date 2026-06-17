@@ -6,6 +6,7 @@ on:
       - main
       - ft/frontend-setup
       - ft/product-management-create
+      - ft/product-management-update
 
   pull_request:
     branches:
