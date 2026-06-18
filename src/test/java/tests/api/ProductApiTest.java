@@ -50,6 +50,7 @@ public class ProductApiTest extends BaseApiTest {
                 "Expected admin login response to contain token"
         );
 
+//        return token;
         return token;
     }
 
