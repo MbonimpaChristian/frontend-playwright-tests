@@ -1,4 +1,4 @@
-package api.testdata;
+package tests.api.testdata;
 
 public class ProductTestData {
 
@@ -8,6 +8,15 @@ public class ProductTestData {
     public static final double PRODUCT_PRICE = 45.99;
     public static final double PRODUCT_COMPARE_PRICE = 69.99;
     public static final double PRODUCT_FLASH_SALE_PRICE = 39.99;
+
+    public static final String UPDATED_PRODUCT_DESCRIPTION =
+            "Updated product description from REST Assured API automation test";
+
+    public static final double UPDATED_PRODUCT_PRICE = 55.99;
+    public static final double UPDATED_PRODUCT_COMPARE_PRICE = 79.99;
+    public static final boolean UPDATED_IS_FEATURED = false;
+    public static final boolean UPDATED_IS_FLASH_SALE = false;
+    public static final double UPDATED_FLASH_SALE_PRICE = 0;
 
     public static final String TAG_QA = "qa";
     public static final String TAG_AUTOMATION = "automation";

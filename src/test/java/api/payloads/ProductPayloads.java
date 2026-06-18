@@ -1,6 +1,6 @@
 package api.payloads;
 
-import api.testdata.ProductTestData;
+import tests.api.testdata.ProductTestData;
 
 public class ProductPayloads {
 
@@ -52,16 +52,24 @@ public class ProductPayloads {
 
     public static String updateProductPayload(String updatedName) {
         return """
-            {
-              "name": "%s",
-              "description": "Updated product description from REST Assured API automation test",
-              "price": 55.99,
-              "comparePrice": 79.99,
-              "isFeatured": false,
-              "isFlashSale": false,
-              "flashSalePrice": 0
-            }
-            """.formatted(updatedName);
+                {
+                  "name": "%s",
+                  "description": "%s",
+                  "price": %.2f,
+                  "comparePrice": %.2f,
+                  "isFeatured": %b,
+                  "isFlashSale": %b,
+                  "flashSalePrice": %.2f
+                }
+                """.formatted(
+                updatedName,
+                ProductTestData.UPDATED_PRODUCT_DESCRIPTION,
+                ProductTestData.UPDATED_PRODUCT_PRICE,
+                ProductTestData.UPDATED_PRODUCT_COMPARE_PRICE,
+                ProductTestData.UPDATED_IS_FEATURED,
+                ProductTestData.UPDATED_IS_FLASH_SALE,
+                ProductTestData.UPDATED_FLASH_SALE_PRICE
+        );
     }
 
     private ProductPayloads() {

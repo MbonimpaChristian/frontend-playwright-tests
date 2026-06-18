@@ -7,6 +7,7 @@ import api.endpoints.ProductEndpoints;
 import api.payloads.AuthPayloads;
 import api.payloads.ProductPayloads;
 import api.status.StatusCode;
+import tests.api.testdata.ProductTestData;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -149,7 +150,7 @@ public class ProductApiTest extends BaseApiTest {
 
         Assert.assertEquals(
                 response.jsonPath().getString("data.description"),
-                "Updated product description from REST Assured API automation test",
+                ProductTestData.UPDATED_PRODUCT_DESCRIPTION,
                 "Expected product description to be updated"
         );
     }
