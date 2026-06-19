@@ -134,5 +134,15 @@ public class ProductApiTest extends BaseApiTest {
                 response.jsonPath().getBoolean("success"),
                 "Expected success to be true"
         );
+
+        Response getDeletedProductResponse = getRequest(
+                ProductEndpoints.productById(productId)
+        );
+
+        Assert.assertEquals(
+                getDeletedProductResponse.statusCode(),
+                StatusCode.NOT_FOUND,
+                "Expected deleted product to no longer be retrievable"
+        );
     }
 }
