@@ -11,7 +11,7 @@ public class ConfigReader {
     static {
         try (InputStream inputStream = ConfigReader.class
                 .getClassLoader()
-                .getResourceAsStream("config.properties")) {
+                .getResourceAsStream("config")) {
 
             if (inputStream == null) {
                 throw new RuntimeException("config.properties file was not found");

@@ -12,6 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import utils.ConfigReader;
 
+import java.io.File;
 import java.util.List;
 
 public class ProductApiTest extends BaseApiTest {
@@ -143,6 +144,37 @@ public class ProductApiTest extends BaseApiTest {
                 getDeletedProductResponse.statusCode(),
                 StatusCode.NOT_FOUND,
                 "Expected deleted product to no longer be retrievable"
+        );
+    }
+
+    @Test
+    public void adminShouldUploadProductImageSuccessfully() {
+        String token = getAdminToken();
+        String productId = createProductAndReturnId(token);
+
+        File imageFile = new File("src/test/resources/images/test-product-image.png");
+
+        Assert.assertTrue(
+                imageFile.exists(),
+                "Expected test image file to exist"
+        );
+
+        Response response = postMultipartWithToken(
+                ProductEndpoints.productImages(productId),
+                "images",
+                imageFile,
+                token
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.CREATED,
+                "Expected POST /products/{id}/images to return 201 Created"
+        );
+
+        Assert.assertTrue(
+                response.jsonPath().getBoolean("success"),
+                "Expected success to be true"
         );
     }
 }

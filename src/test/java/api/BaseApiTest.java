@@ -6,6 +6,8 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.testng.annotations.BeforeMethod;
 
+import java.io.File;
+
 public class BaseApiTest {
 
     protected RequestSpecification requestSpec;
@@ -114,6 +116,22 @@ public class BaseApiTest {
                 .header("Authorization", "Bearer " + token)
                 .when()
                 .delete(endpoint)
+                .then()
+                .extract()
+                .response();
+    }
+
+    protected Response postMultipartWithToken(String endpoint, String fieldName, File file, String token) {
+        validateEndpoint(endpoint);
+
+        return RestAssured
+                .given()
+                .spec(requestSpec)
+                .contentType(io.restassured.http.ContentType.MULTIPART)
+                .header("Authorization", "Bearer " + token)
+                .multiPart(fieldName, file)
+                .when()
+                .post(endpoint)
                 .then()
                 .extract()
                 .response();
