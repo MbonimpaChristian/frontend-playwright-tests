@@ -50,6 +50,7 @@ public class ProductApiTest extends BaseApiTest {
                 "Expected admin login response to contain token"
         );
 
+//        return token;
         return token;
     }
 
@@ -62,7 +63,8 @@ public class ProductApiTest extends BaseApiTest {
                 "Expected GET /categories to return 200 OK"
         );
 
-        List<String> categoryIds = response.jsonPath().getList("data.findAll { it.id != null && it.name != '' }.id");
+        List<String> categoryIds = response.jsonPath()
+                .getList("data.findAll { it.id != null && it.name != '' }.id");
 
         Assert.assertNotNull(
                 categoryIds,
@@ -84,8 +86,8 @@ public class ProductApiTest extends BaseApiTest {
         Response response = postRequestWithToken(
                 ProductEndpoints.PRODUCTS,
                 ProductPayloads.createProductPayload(
-                        "QA Update Product " + uniqueValue,
-                        "QA-UPDATE-" + uniqueValue,
+                        "QA Delete Product " + uniqueValue,
+                        "QA-DELETE-" + uniqueValue,
                         categoryId
                 ),
                 token
@@ -113,21 +115,19 @@ public class ProductApiTest extends BaseApiTest {
     }
 
     @Test
-    public void adminShouldUpdateCreatedProductSuccessfully() {
+    public void adminShouldDeleteCreatedProductSuccessfully() {
         String token = getAdminToken();
         String productId = createProductAndReturnId(token);
-        String updatedName = "Updated QA Product " + System.currentTimeMillis();
 
-        Response response = putRequestWithToken(
+        Response response = deleteRequestWithToken(
                 ProductEndpoints.productById(productId),
-                ProductPayloads.updateProductPayload(updatedName),
                 token
         );
 
         Assert.assertEquals(
                 response.statusCode(),
                 StatusCode.OK,
-                "Expected PUT /products/{id} to return 200 OK"
+                "Expected DELETE /products/{id} to return 200 OK"
         );
 
         Assert.assertTrue(
@@ -135,22 +135,14 @@ public class ProductApiTest extends BaseApiTest {
                 "Expected success to be true"
         );
 
-        Assert.assertEquals(
-                response.jsonPath().getString("data.id"),
-                productId,
-                "Expected updated product id to match the created product id"
+        Response getDeletedProductResponse = getRequest(
+                ProductEndpoints.productById(productId)
         );
 
         Assert.assertEquals(
-                response.jsonPath().getString("data.name"),
-                updatedName,
-                "Expected product name to be updated"
-        );
-
-        Assert.assertEquals(
-                response.jsonPath().getString("data.description"),
-                "Updated product description from REST Assured API automation test",
-                "Expected product description to be updated"
+                getDeletedProductResponse.statusCode(),
+                StatusCode.NOT_FOUND,
+                "Expected deleted product to no longer be retrievable"
         );
     }
 }
