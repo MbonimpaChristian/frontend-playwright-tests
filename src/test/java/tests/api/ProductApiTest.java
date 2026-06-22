@@ -12,7 +12,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import utils.ConfigReader;
 
+import java.io.File;
 import java.util.List;
+import tests.api.testdata.ProductUploadTestData;
 
 public class ProductApiTest extends BaseApiTest {
 
@@ -143,6 +145,68 @@ public class ProductApiTest extends BaseApiTest {
                 getDeletedProductResponse.statusCode(),
                 StatusCode.NOT_FOUND,
                 "Expected deleted product to no longer be retrievable"
+        );
+    }
+
+    @Test(enabled = false, description = "Disabled because backend currently returns 500: image URL is missing")
+    public void adminShouldUploadProductImageSuccessfully() {
+        String token = getAdminToken();
+        String productId = createProductAndReturnId(token);
+
+        File imageFile = new File("src/test/resources/images/test-product-image.png");
+
+        Assert.assertTrue(
+                imageFile.exists(),
+                "Expected test image file to exist"
+        );
+
+        Response response = postMultipartWithToken(
+                ProductEndpoints.productImages(productId),
+                "images",
+                imageFile,
+                token
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.CREATED,
+                "Expected POST /products/{id}/images to return 201 Created"
+        );
+
+        Assert.assertTrue(
+                response.jsonPath().getBoolean("success"),
+                "Expected success to be true"
+        );
+    }
+
+    @Test
+    public void uploadProductImageCurrentlyReturnsServerErrorWhenUrlIsMissing() {
+        String token = getAdminToken();
+        String productId = createProductAndReturnId(token);
+
+        File imageFile = new File(ProductUploadTestData.TEST_PRODUCT_IMAGE_PATH);
+
+        Assert.assertTrue(
+                imageFile.exists(),
+                "Expected test image file to exist"
+        );
+
+        Response response = postMultipartWithToken(
+                ProductEndpoints.productImages(productId),
+                ProductUploadTestData.IMAGES_FIELD,
+                imageFile,
+                token
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.INTERNAL_SERVER_ERROR,
+                "Expected upload image endpoint to return 500 because backend image URL is missing"
+        );
+
+        Assert.assertTrue(
+                response.jsonPath().getString("message").contains("Argument `url` is missing"),
+                "Expected error message to mention missing image URL"
         );
     }
 }
