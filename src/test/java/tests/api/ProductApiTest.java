@@ -208,4 +208,55 @@ public class ProductApiTest extends BaseApiTest {
                 "Expected error message to mention missing image URL"
         );
     }
+
+    @Test
+    public void userShouldGetRelatedProductsSuccessfully() {
+        String token = getAdminToken();
+        String productId = createProductAndReturnId(token);
+
+        Response response = getRequest(
+                ProductEndpoints.relatedProducts(productId)
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.OK,
+                "Expected GET /products/{id}/related to return 200 OK"
+        );
+
+        Assert.assertTrue(
+                response.jsonPath().getBoolean("success"),
+                "Expected success to be true"
+        );
+
+        Assert.assertNotNull(
+                response.jsonPath().getList("data"),
+                "Expected related products data list not to be null"
+        );
+    }
+
+    @Test
+    public void userShouldNotGetRelatedProductsForInvalidProductId() {
+        String invalidProductId = "9999999999999";
+
+        Response response = getRequest(
+                ProductEndpoints.relatedProducts(invalidProductId)
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.NOT_FOUND,
+                "Expected GET /products/{id}/related with invalid id to return 404 Not Found"
+        );
+
+        Assert.assertFalse(
+                response.jsonPath().getBoolean("success"),
+                "Expected success to be false"
+        );
+
+        Assert.assertNotNull(
+                response.jsonPath().getString("message"),
+                "Expected error message not to be null"
+        );
+    }
 }
