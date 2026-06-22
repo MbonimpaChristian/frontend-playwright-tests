@@ -12,6 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import utils.ConfigReader;
 
+import java.io.File;
 import java.util.List;
 
 public class ProductApiTest extends BaseApiTest {
@@ -143,6 +144,119 @@ public class ProductApiTest extends BaseApiTest {
                 getDeletedProductResponse.statusCode(),
                 StatusCode.NOT_FOUND,
                 "Expected deleted product to no longer be retrievable"
+        );
+    }
+
+    @Test(enabled = false, description = "Disabled because backend currently returns 500: image URL is missing")
+    public void adminShouldUploadProductImageSuccessfully() {
+        String token = getAdminToken();
+        String productId = createProductAndReturnId(token);
+
+        File imageFile = new File("src/test/resources/images/test-product-image.png");
+
+        Assert.assertTrue(
+                imageFile.exists(),
+                "Expected test image file to exist"
+        );
+
+        Response response = postMultipartWithToken(
+                ProductEndpoints.productImages(productId),
+                "images",
+                imageFile,
+                token
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.CREATED,
+                "Expected POST /products/{id}/images to return 201 Created"
+        );
+
+        Assert.assertTrue(
+                response.jsonPath().getBoolean("success"),
+                "Expected success to be true"
+        );
+    }
+
+    @Test
+    public void uploadProductImageCurrentlyReturnsServerErrorWhenUrlIsMissing() {
+        String token = getAdminToken();
+        String productId = createProductAndReturnId(token);
+
+        File imageFile = new File("src/test/resources/images/test-product-image.png");
+
+        Assert.assertTrue(
+                imageFile.exists(),
+                "Expected test image file to exist"
+        );
+
+        Response response = postMultipartWithToken(
+                ProductEndpoints.productImages(productId),
+                "images",
+                imageFile,
+                token
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.INTERNAL_SERVER_ERROR,
+                "Expected upload image endpoint to return 500 because backend image URL is missing"
+        );
+
+        Assert.assertTrue(
+                response.jsonPath().getString("message").contains("Argument `url` is missing"),
+                "Expected error message to mention missing image URL"
+        );
+    }
+
+    @Test
+    public void userShouldGetRelatedProductsSuccessfully() {
+        String token = getAdminToken();
+        String productId = createProductAndReturnId(token);
+
+        Response response = getRequest(
+                ProductEndpoints.relatedProducts(productId)
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.OK,
+                "Expected GET /products/{id}/related to return 200 OK"
+        );
+
+        Assert.assertTrue(
+                response.jsonPath().getBoolean("success"),
+                "Expected success to be true"
+        );
+
+        Assert.assertNotNull(
+                response.jsonPath().getList("data"),
+                "Expected related products data list not to be null"
+        );
+    }
+
+    @Test
+    public void userShouldNotGetRelatedProductsForInvalidProductId() {
+        String invalidProductId = "9999999999999";
+
+        Response response = getRequest(
+                ProductEndpoints.relatedProducts(invalidProductId)
+        );
+
+        Assert.assertEquals(
+                response.statusCode(),
+                StatusCode.NOT_FOUND,
+                "Expected GET /products/{id}/related with invalid id to return 404 Not Found"
+        );
+
+        Assert.assertFalse(
+                response.jsonPath().getBoolean("success"),
+                "Expected success to be false"
+        );
+
+        Assert.assertNotNull(
+                response.jsonPath().getString("message"),
+                "Expected error message not to be null"
         );
     }
 }

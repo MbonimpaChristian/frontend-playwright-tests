@@ -25,12 +25,9 @@ public class ConfigReader {
     }
 
     public static String get(String key) {
-        String value = properties.getProperty(key);
+        return properties.getProperty(key);
+    }
 
-        if (value == null || value.isBlank()) {
-            throw new RuntimeException("Missing value for key: " + key);
-        }
-
-        return value;
+    private ConfigReader() {
     }
 }
