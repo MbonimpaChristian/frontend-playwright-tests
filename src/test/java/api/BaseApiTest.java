@@ -130,15 +130,10 @@ public class BaseApiTest {
                 .basePath(utils.ConfigReader.get("api.base.path"))
                 .accept(io.restassured.http.ContentType.JSON)
                 .header("Authorization", "Bearer " + token)
-                .multiPart(fieldName, file, "image/png")
-                .log().method()
-                .log().uri()
-                .log().headers()
+                .multiPart(fieldName, file)
                 .when()
                 .post(endpoint)
                 .then()
-                .log().status()
-                .log().body()
                 .extract()
                 .response();
     }

@@ -14,6 +14,7 @@ import utils.ConfigReader;
 
 import java.io.File;
 import java.util.List;
+import tests.api.testdata.ProductUploadTestData;
 
 public class ProductApiTest extends BaseApiTest {
 
@@ -183,7 +184,7 @@ public class ProductApiTest extends BaseApiTest {
         String token = getAdminToken();
         String productId = createProductAndReturnId(token);
 
-        File imageFile = new File("src/test/resources/images/test-product-image.png");
+        File imageFile = new File(ProductUploadTestData.TEST_PRODUCT_IMAGE_PATH);
 
         Assert.assertTrue(
                 imageFile.exists(),
@@ -192,7 +193,7 @@ public class ProductApiTest extends BaseApiTest {
 
         Response response = postMultipartWithToken(
                 ProductEndpoints.productImages(productId),
-                "images",
+                ProductUploadTestData.IMAGES_FIELD,
                 imageFile,
                 token
         );
