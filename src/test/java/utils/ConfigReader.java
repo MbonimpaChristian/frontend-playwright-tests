@@ -11,7 +11,7 @@ public class ConfigReader {
     static {
         try (InputStream inputStream = ConfigReader.class
                 .getClassLoader()
-                .getResourceAsStream("config")) {
+                .getResourceAsStream("config.properties")) {
 
             if (inputStream == null) {
                 throw new RuntimeException("config.properties file was not found");
@@ -25,12 +25,9 @@ public class ConfigReader {
     }
 
     public static String get(String key) {
-        String value = properties.getProperty(key);
+        return properties.getProperty(key);
+    }
 
-        if (value == null || value.isBlank()) {
-            throw new RuntimeException("Missing value for key: " + key);
-        }
-
-        return value;
+    private ConfigReader() {
     }
 }

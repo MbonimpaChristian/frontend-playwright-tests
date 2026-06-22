@@ -126,13 +126,19 @@ public class BaseApiTest {
 
         return RestAssured
                 .given()
-                .spec(requestSpec)
-                .contentType(io.restassured.http.ContentType.MULTIPART)
+                .baseUri(utils.ConfigReader.get("api.base.uri"))
+                .basePath(utils.ConfigReader.get("api.base.path"))
+                .accept(io.restassured.http.ContentType.JSON)
                 .header("Authorization", "Bearer " + token)
-                .multiPart(fieldName, file)
+                .multiPart(fieldName, file, "image/png")
+                .log().method()
+                .log().uri()
+                .log().headers()
                 .when()
                 .post(endpoint)
                 .then()
+                .log().status()
+                .log().body()
                 .extract()
                 .response();
     }
